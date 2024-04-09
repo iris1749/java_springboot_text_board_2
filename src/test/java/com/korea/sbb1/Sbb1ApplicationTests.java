@@ -4,6 +4,7 @@ import com.korea.sbb1.answer.Answer;
 import com.korea.sbb1.answer.AnswerRepository;
 import com.korea.sbb1.question.Question;
 import com.korea.sbb1.question.QuestionRepository;
+import com.korea.sbb1.question.QuestionService;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ class Sbb1ApplicationTests {
 
 	@Autowired
 	private AnswerRepository answerRepository;
+
+	@Autowired
+	private QuestionService questionService;
 
 
 //	@Test
@@ -117,44 +121,27 @@ class Sbb1ApplicationTests {
 //		assertEquals(2, a.getQuestion().getId());
 //	}
 
-	@Transactional
+//	@Transactional
+//	@Test
+//	void testJpa() {
+//		Optional<Question> oq = this.questionRepository.findById(2);
+//		assertTrue(oq.isPresent());
+//		Question q = oq.get();
+//
+//		List<Answer> answerList = q.getAnswerList();
+//
+//		assertEquals(1, answerList.size());
+//		assertEquals("네 자동으로 생성됩니다.", answerList.get(0).getContent());
+//
+//	}
+
 	@Test
 	void testJpa() {
-		Optional<Question> oq = this.questionRepository.findById(2);
-		assertTrue(oq.isPresent());
-		Question q = oq.get();
-
-		List<Answer> answerList = q.getAnswerList();
-
-		assertEquals(1, answerList.size());
-		assertEquals("네 자동으로 생성됩니다.", answerList.get(0).getContent());
-
+		for (int i = 1; i<=300; i++) {
+			String subject = String.format("테스트 데이터:[%03d]", i);
+			String content = "내용무";
+			this.questionService.create(subject, content, null);
+		}
 	}
-
-//	@Test
-//	void testJpa() {
-//
-//
-//	}
-//
-//	@Test
-//	void testJpa() {
-//
-//
-//	}
-//
-//	@Test
-//	void testJpa() {
-//
-//
-//	}
-//
-//	@Test
-//	void testJpa() {
-//
-//
-//	}
-
-
 
 }
