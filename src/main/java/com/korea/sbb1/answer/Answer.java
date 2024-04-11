@@ -1,16 +1,12 @@
 package com.korea.sbb1.answer;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import com.korea.sbb1.question.Question;
 
 import com.korea.sbb1.user.SiteUser;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,4 +30,7 @@ public class Answer {
     private SiteUser author;
 
     private LocalDateTime modifyDate;
+
+    @ManyToMany
+    Set<SiteUser> voter;
 }
