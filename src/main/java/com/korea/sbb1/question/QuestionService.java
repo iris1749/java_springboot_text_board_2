@@ -24,41 +24,73 @@ public class QuestionService {
 
     private final QuestionRepository questionRepository;
 
-    private Specification<Question> search(String kw, String searchOption) {
-        return new Specification<>() {
-            private static final long serialVersionUID = 1L;
+    public Specification<Question> search(String kw, String searchoption) {
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
 
-            @Override
-            public Predicate toPredicate(Root<Question> q, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                query.distinct(true);
-                Join<Question, SiteUser> u1 = q.join("author", JoinType.LEFT);
-                Join<Question, Answer> a = q.join("answerList", JoinType.LEFT);
-                Join<Answer, SiteUser> u2 = a.join("author", JoinType.LEFT);
-
-                switch (searchOption) {
-                    case "title":
-                        return cb.like(q.get("subject"), "%" + kw + "%");
-                    case "author":
-                        return cb.like(u1.get("username"), "%" + kw + "%");
-                    case "comment":
-                        return cb.or(cb.like(a.get("content"), "%" + kw + "%"), cb.like(u2.get("username"), "%" + kw + "%"));
-                    case "all":
-                        return cb.or(cb.like(q.get("subject"), "%" + kw + "%"),
-                                cb.like(u1.get("username"), "%" + kw + "%"),
-                                cb.like(a.get("content"), "%" + kw + "%"),
-                                cb.like(u2.get("username"), "%" + kw + "%"));
-                    default:
-                        throw new IllegalArgumentException("Invalid search option: " + searchOption);
-                }
+            if (kw.isEmpty()) {
+                // 키워드가 비어있으면 아무 조건도 추가하지 않음
+                return criteriaBuilder.conjunction();
             }
+
+            switch (searchoption) {
+                case "title":
+                    predicates.add(criteriaBuilder.like(root.get("subject"), "%" + kw + "%"));
+                    break;
+
+                case "author":
+                    Join<Question, SiteUser> authorJoin = root.join("author", JoinType.LEFT);
+                    predicates.add(criteriaBuilder.like(authorJoin.get("username"), "%" + kw + "%"));
+                    break;
+
+                case "comment":
+                    Join<Question, Answer> answerJoin = root.join("answerList", JoinType.LEFT);
+                    Join<Answer, SiteUser> commenterJoin = answerJoin.join("author", JoinType.LEFT);
+                    predicates.add(criteriaBuilder.or(
+                            criteriaBuilder.like(answerJoin.get("content"), "%" + kw + "%"),
+                            criteriaBuilder.like(commenterJoin.get("username"), "%" + kw + "%")
+                    ));
+                    break;
+
+                case "all":
+                    Join<Question, SiteUser> allAuthorJoin = root.join("author", JoinType.LEFT);
+                    Join<Question, Answer> allAnswerJoin = root.join("answerList", JoinType.LEFT);
+                    Join<Answer, SiteUser> allCommenterJoin = allAnswerJoin.join("author", JoinType.LEFT);
+                    predicates.add(criteriaBuilder.or(
+                            criteriaBuilder.like(root.get("subject"), "%" + kw + "%"),
+                            criteriaBuilder.like(allAuthorJoin.get("username"), "%" + kw + "%"),
+                            criteriaBuilder.like(allAnswerJoin.get("content"), "%" + kw + "%"),
+                            criteriaBuilder.like(allCommenterJoin.get("username"), "%" + kw + "%")
+                    ));
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid search option: " + searchoption);
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }
 
-    public Page<Question> getList(int page, String kw, String searchOption) {
+//    public Page<Question> getList(int page, String kw, String searchoption) {
+//        List<Sort.Order> sorts = new ArrayList<>();
+//        sorts.add(Sort.Order.desc("createDate"));
+//        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
+//        Specification<Question> specification = search(kw, searchoption);
+//        return questionRepository.findAll(specification, pageable);
+//    }
+
+    public Page<Question> getList(int page, String kw, String searchoption) {
+        System.out.println("getList called with kw: " + kw + ", searchoption: " + searchoption);
+
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createDate"));
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
-        return this.questionRepository.findAll(search(kw, searchOption), pageable);
+        Specification<Question> specification = search(kw, searchoption);
+
+        Page<Question> result = questionRepository.findAll(specification, pageable);
+        System.out.println("Query result: " + result);
+
+        return result;
     }
 
     public Question getQuestion(Integer id) {

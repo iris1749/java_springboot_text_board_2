@@ -15,37 +15,50 @@
 
         <style>
             /* select 태그와 검색 입력 창의 너비 제한 */
-            .input-group {
+            #search_form {
                 max-width: 350px;
             }
 
             /* select 태그의 너비 조절 */
             #search_option {
-            flex-grow: 1;
+                flex-grow: 1;
+                min-width: 105px;
             }
 
             /* 검색 입력 창 너비 조절 */
             #search_kw {
-                width: 140px;
+                width: 175px;
             }
-
         </style>
 
         <div class="col-6 d-flex justify-content-end">
-            <div class="input-group">
-                <select class="form-select" id="search_option" name="searchOption">
-                    <option value="all" selected>전체</option>
-                    <option value="title">제목</option>
-                    <option value="author">작성자</option>
-                    <option value="comment">댓글</option>
-                </select>
-                <input type="text" id="search_kw" class="form-control" th:value="${kw}">
-                <button class="btn btn-outline-secondary" type="button" id="btn_search">검색</button>
-            </div>
+            <form th:action="@{/question/list}" method="get" id="pagingForm">
+                <div class="input-group" id="search_form">
+                    <select class="form-select" id="search_option" name="searchoption">
+                        <option value="all" selected>전체</option>
+                        <option value="title">제목</option>
+                        <option value="author">작성자</option>
+                        <option value="comment">댓글</option>
+                    </select>
+                    <input type="text" id="search_kw" name="search_kw" class="form-control" th:value="${kw}">
+                    <button class="btn btn-outline-secondary" type="submit">검색</button>
+                </div>
+            </form>
         </div>
 
-    </div>
+        <script>
+            // 페이지 로드될 때 URL 조작하여 검색 옵션과 키워드 설정
+           document.addEventListener("DOMContentLoaded", function () {
+            var urlParams = new URLSearchParams(window.location.search);
+            var searchoption = urlParams.get('searchoption') || 'all'; // 기본값 'all'
+            var searchKeyword = urlParams.get('search_kw') || ''; // 기본값 빈 문자열
 
+            document.getElementById("search_option").value = searchoption;
+            document.getElementById("search_kw").value = searchKeyword;
+        });
+        </script>
+
+    </div>
 
     <table class="table">
         <thead class="table-dark">
@@ -56,6 +69,7 @@
             <th>작성일시</th>
         </tr>
         </thead>
+
         <tbody>
         <tr class="text-center" th:each="question, loop : ${paging}">
             <td th:text="${paging.getTotalElements - (paging.number * paging.size) - loop.index}"></td>
@@ -79,10 +93,10 @@
                     <span>이전</span>
                 </a>
             </li>
-            <li th:each="page: ${#numbers.sequence(0, paging.totalPages-1)}"
-                th:if="${page >= paging.number-5 and page <= paging.number+5}"
+            <li th:each="page: ${#numbers.sequence(paging.number - 2, paging.number + 2)}"
+                th:if="${page >= 0 and page < paging.totalPages}"
                 th:classappend="${page == paging.number} ? 'active'" class="page-item">
-                <a th:text="${page}" class="page-link" href="javascript:void(0)" th:data-page="${page}"></a>
+                <a th:text="${page + 1}" class="page-link" href="javascript:void(0)" th:data-page="${page}"></a>
             </li>
             <li class="page-item" th:classappend="${!paging.hasNext} ? 'disabled'">
                 <a class="page-link" href="javascript:void(0)" th:data-page="${paging.number+1}">
@@ -91,46 +105,27 @@
             </li>
         </ul>
     </div>
-
     <!-- 페이징처리 끝 -->
-    <form th:action="@{/question/list}" method="get" id="searchForm">
-        <input type="hidden" id="kw" name="kw" th:value="${kw}">
+
+    <form th:action="@{/question/list}" method="get" id="pagingForm">
         <input type="hidden" id="page" name="page" th:value="${paging.number}">
     </form>
 </div>
 
 <script layout:fragment="script" type='text/javascript'>
-    document.addEventListener("DOMContentLoaded", function() {
-        const pageElements = document.getElementsByClassName("page-link");
-        Array.from(pageElements).forEach(function (element) {
-            element.addEventListener('click', function () {
-                document.getElementById('page').value = this.dataset.page;
-                document.getElementById('searchOption').value = sessionStorage.getItem("searchOption"); // 검색 옵션 설정
-                document.getElementById('searchForm').submit();
-            });
-        });
+    const page_elements = document.getElementsByClassName("page-link");
+    Array.from(page_elements).forEach(function(element) {
+        element.addEventListener('click', function() {
+            const searchoption = document.getElementById("search_option").value;
+            const searchKeyword = document.getElementById("search_kw").value;
+            const page = this.dataset.page;
 
-        const btnSearch = document.getElementById("btn_search");
-        btnSearch.addEventListener('click', function () {
-        const searchKwInput = document.getElementById('search_kw');
-        const searchOptionSelect = document.getElementById('search_option');
-        const kw = searchKwInput.value;
-        sessionStorage.setItem("searchOption", searchOptionSelect.value); // 선택한 옵션 저장
+            let url = '/question/list?page=' + page;
+            if (searchoption && searchKeyword) {
+                url += '&searchoption=' + searchoption + '&search_kw=' + searchKeyword;
+            }
 
-        // AJAX를 사용하여 검색 결과를 받아옴
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', '/question/list?page=0&kw=' + kw + '&searchOption=' + searchOptionSelect.value, true);
-        xhr.onload = function () {
-            if (xhr.status >= 200 && xhr.status < 400) {
-                // 성공적으로 결과를 받아왔을 때, 페이지의 일부를 업데이트
-                const newContent = xhr.responseText;
-                const newDoc = new DOMParser().parseFromString(newContent, 'text/html');
-                const contentFragment = newDoc.querySelector('[layout\\:fragment="content"]');
-                const oldContent = document.querySelector('[layout\\:fragment="content"]');
-                oldContent.innerHTML = contentFragment.innerHTML;
-                }
-            };
-            xhr.send();
+            window.location.href = url;
         });
     });
 </script>
