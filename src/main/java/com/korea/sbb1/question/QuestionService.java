@@ -46,11 +46,7 @@ public class QuestionService {
 
                 case "comment":
                     Join<Question, Answer> answerJoin = root.join("answerList", JoinType.LEFT);
-                    Join<Answer, SiteUser> commenterJoin = answerJoin.join("author", JoinType.LEFT);
-                    predicates.add(criteriaBuilder.or(
-                            criteriaBuilder.like(answerJoin.get("content"), "%" + kw + "%"),
-                            criteriaBuilder.like(commenterJoin.get("username"), "%" + kw + "%")
-                    ));
+                    predicates.add(criteriaBuilder.like(answerJoin.get("content"), "%" + kw + "%"));
                     break;
 
                 case "all":
