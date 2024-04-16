@@ -51,6 +51,7 @@ public class AnswerController {
         if (!answer.getAuthor().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
+
         answerForm.setContent(answer.getContent());
         return "answer_form";
     }

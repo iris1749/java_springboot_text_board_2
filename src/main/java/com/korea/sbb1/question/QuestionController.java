@@ -1,6 +1,8 @@
 package com.korea.sbb1.question;
 
+import com.korea.sbb1.answer.Answer;
 import com.korea.sbb1.answer.AnswerForm;
+import com.korea.sbb1.answer.AnswerService;
 import com.korea.sbb1.user.SiteUser;
 import com.korea.sbb1.user.UserService;
 import jakarta.validation.Valid;
@@ -29,6 +31,8 @@ public class QuestionController {
     private final QuestionService questionService;
     private final UserService userService;
 
+    private final AnswerService answerService;
+
     @GetMapping("/list")
     public String list(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
                        @RequestParam(value = "search_kw", defaultValue = "") String kw,
@@ -40,9 +44,14 @@ public class QuestionController {
     }
 
     @GetMapping(value = "/detail/{id}")
-    public String detail(Model model, @PathVariable("id") Integer id, AnswerForm answerForm) {
+    public String detail(Model model, @PathVariable("id") Integer id, AnswerForm answerForm,
+                         @RequestParam(name = "page", defaultValue = "0") int page) {
         Question question = this.questionService.getQuestion(id);
         model.addAttribute("question", question);
+
+        Page<Answer> paging = this.answerService.getList(page);
+        model.addAttribute("paging", paging);
+
         return "question_detail";
     }
 

@@ -68,16 +68,7 @@ public class QuestionService {
         };
     }
 
-//    public Page<Question> getList(int page, String kw, String searchoption) {
-//        List<Sort.Order> sorts = new ArrayList<>();
-//        sorts.add(Sort.Order.desc("createDate"));
-//        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
-//        Specification<Question> specification = search(kw, searchoption);
-//        return questionRepository.findAll(specification, pageable);
-//    }
-
     public Page<Question> getList(int page, String kw, String searchoption) {
-        System.out.println("getList called with kw: " + kw + ", searchoption: " + searchoption);
 
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createDate"));
@@ -85,7 +76,6 @@ public class QuestionService {
         Specification<Question> specification = search(kw, searchoption);
 
         Page<Question> result = questionRepository.findAll(specification, pageable);
-        System.out.println("Query result: " + result);
 
         return result;
     }

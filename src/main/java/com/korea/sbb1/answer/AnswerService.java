@@ -4,9 +4,16 @@ import com.korea.sbb1.DataNotFoundException;
 import com.korea.sbb1.question.Question;
 import com.korea.sbb1.user.SiteUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -23,6 +30,17 @@ public class AnswerService {
         answer.setAuthor(author);
         this.answerRepository.save(answer);
         return answer;
+    }
+
+    public Page<Answer> getList(int page) {
+
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createDate"));
+        Pageable pageable = PageRequest.of(page, 5, Sort.by(sorts));
+
+        Page<Answer> result = answerRepository.findAll(pageable);
+
+        return result;
     }
 
     public Answer getAnswer(Integer id) {

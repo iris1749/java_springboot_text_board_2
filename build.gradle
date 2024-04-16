@@ -40,6 +40,7 @@ dependencies {
 	implementation 'org.commonmark:commonmark:0.21.0'
 }
 
+
 tasks.named('test') {
 	useJUnitPlatform()
 }

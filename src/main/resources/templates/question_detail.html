@@ -93,21 +93,36 @@
         <input type="submit" value="답변등록" class="btn btn-primary my-2">
     </form>
 </div>
-<script layout:fragment="script" type='text/javascript'>
+
+<script layout:fragment="script" type='text/javascript' id="delete_recommend">
     const delete_elements = document.getElementsByClassName("delete");
-    Array.from(delete_elements).forEach(function (element) {
-        element.addEventListener('click', function () {
-            if (confirm("정말로 삭제하시겠습니까?")) {
-                location.href = this.dataset.uri;
+        Array.from(delete_elements).forEach(function (element) {
+            element.addEventListener('click', function () {
+                if (confirm("정말로 삭제하시겠습니까?")) {
+                    location.href = this.dataset.uri;
             };
         });
     });
+
     const recommend_elements = document.getElementsByClassName("recommend");
-    Array.from(recommend_elements).forEach(function (element) {
-        element.addEventListener('click', function () {
-            if (confirm("정말로 추천하시겠습니까?")) {
-                location.href = this.dataset.uri;
+        Array.from(recommend_elements).forEach(function (element) {
+            element.addEventListener('click', function () {
+                if (confirm("정말로 추천하시겠습니까?")) {
+                    location.href = this.dataset.uri;
             };
+        });
+    });
+</script>
+
+<script layout:fragment="script" type='text/javascript' id="recommend_paging">
+    const page_elements = document.getElementsByClassName("page-link");
+    const questionId = /* 질문 ID를 가져오는 코드 */;
+
+    Array.from(page_elements).forEach(function(element) {
+        element.addEventListener('click', function() {
+            const page = this.dataset.page;
+            let url = '/question/detail/' + questionId + '#answer_' + questionId + '?page=' + page;
+            window.location.href = url;
         });
     });
 </script>
