@@ -126,6 +126,7 @@
     </div>
     <!-- 페이징처리 끝 -->
 
+
     <form th:action="@{/question/detail}" method="get" id="card-body">
         <input type="hidden" id="page" name="page" th:value="${paging.number}">
     </form>
@@ -146,22 +147,22 @@
     Array.from(recommend_elements).forEach(function (element) {
         element.addEventListener('click', function () {
             if (confirm("정말로 추천하시겠습니까?")) {
-                location.href = this.dataset.uri;
+                const answerId = this.closest('.card').id.split('_')[1]; // 답변의 ID 가져오기
+                const url = '/answer/vote/' + answerId;
+                location.href = url;
             }
         });
     });
 
     // 페이징 스크립트
-    const paging_links = document.getElementsByClassName("paging");
-    Array.from(paging).forEach(function(element) {
-        if (!element.hasEventListener('click')) { // 리스너 존재 여부 확인
-            element.addEventListener('click', function() {
-                const questionId = [[${question.id}]]; // Thymeleaf 변수에서 질문 ID 가져오기
-                const page = this.dataset.page;
-                let url = '/question/detail/' + questionId + '?page=' + page + '#answer_' + questionId;
-                window.location.href = url;
-            });
-        }
+    const paging_links = document.getElementsByClassName("page-link");
+    Array.from(paging_links).forEach(function(element) {
+        element.addEventListener('click', function() {
+            const questionId = [[${question.id}]]; // Thymeleaf 변수에서 질문 ID 가져오기
+            const page = this.dataset.page;
+            const url = '/question/detail/' + questionId + '?page=' + page;
+            window.location.href = url;
+        });
     });
 </script>
 
