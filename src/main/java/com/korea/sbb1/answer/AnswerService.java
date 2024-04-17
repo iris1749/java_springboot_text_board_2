@@ -32,16 +32,11 @@ public class AnswerService {
         return answer;
     }
 
-    public Page<Answer> getList(int page) {
-
-        List<Sort.Order> sorts = new ArrayList<>();
-        sorts.add(Sort.Order.desc("createDate"));
-        Pageable pageable = PageRequest.of(page, 5, Sort.by(sorts));
-
-        Page<Answer> result = answerRepository.findAll(pageable);
-
-        return result;
+    public Page<Answer> getListByQuestion(Question question, int page) {
+        Pageable pageable = PageRequest.of(page, 5, Sort.by("createDate").descending());
+        return answerRepository.findByQuestion(question, pageable);
     }
+
 
     public Answer getAnswer(Integer id) {
         Optional<Answer> answer = this.answerRepository.findById(id);

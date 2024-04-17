@@ -44,46 +44,57 @@
     </div>
     <!-- 답변의 갯수 표시 -->
     <h5 class="border-bottom my-3 py-2" th:text="|${#lists.size(question.answerList)}개의 답변이 있습니다.|"></h5>
+
     <!-- 답변 반복 시작 -->
-    <div class="card my-3" th:each="answer : ${question.answerList}">
-        <a th:id="|answer_${answer.id}|"></a>
-        <div class="card-body">
-            <div class="card-text" th:utext="${@commonUtil.markdown(answer.content)}"></div>
-            <div class="d-flex justify-content-end">
-                <div th:if="${answer.modifyDate != null}" class="badge bg-light text-dark p-2 text-start mx-3">
-                    <div class="mb-2">modified at</div>
-                    <div th:text="${#temporals.format(answer.modifyDate, 'yyyy-MM-dd HH:mm')}"></div>
-                </div>
-                <div class="badge bg-light text-dark p-2 text-start">
-                    <div class="mb-2">
-                        <span th:if="${answer.author != null}" th:text="${answer.author.username}"></span>
+    <div>
+        <tbody>
+        <tr class="text-center" th:each="answer : ${paging.content}">
+            <td>
+                <div class="card my-3">
+                    <a th:id="|answer_${answer.id}|"></a>
+                    <div class="card-body">
+                        <div class="card-text" th:utext="${@commonUtil.markdown(answer.content)}"></div>
+                        <div class="d-flex justify-content-end">
+                            <div th:if="${answer.modifyDate != null}"
+                                 class="badge bg-light text-dark p-2 text-start mx-3">
+                                <div class="mb-2">modified at</div>
+                                <div th:text="${#temporals.format(answer.modifyDate, 'yyyy-MM-dd HH:mm')}"></div>
+                            </div>
+                            <div class="badge bg-light text-dark p-2 text-start">
+                                <div class="mb-2">
+                                    <span th:if="${answer.author != null}" th:text="${answer.author.username}"></span>
+                                </div>
+                                <div th:text="${#temporals.format(answer.createDate, 'yyyy-MM-dd HH:mm')}"></div>
+                            </div>
+                        </div>
+                        <div class="my-3">
+                            <a href="javascript:void(0);" class="recommend btn btn-sm btn-outline-secondary"
+                               th:data-uri="@{|/answer/vote/${answer.id}|}">
+                                추천
+                                <span class="badge rounded-pill bg-success"
+                                      th:text="${#lists.size(answer.voter)}"></span>
+                            </a>
+                            <a th:href="@{|/answer/modify/${answer.id}|}"
+                               class="btn btn-sm btn-outline-secondary"
+                               sec:authorize="isAuthenticated()"
+                               th:if="${answer.author != null and #authentication.getPrincipal().getUsername() == answer.author.username}"
+                               th:text="수정">
+                            </a>
+                            <a href="javascript:void(0);" th:data-uri="@{|/answer/delete/${answer.id}|}"
+                               class="delete btn btn-sm btn-outline-secondary"
+                               sec:authorize="isAuthenticated()"
+                               th:if="${answer.author != null and #authentication.getPrincipal().getUsername() == answer.author.username}"
+                               th:text="삭제">
+                            </a>
+                        </div>
                     </div>
-                    <div th:text="${#temporals.format(answer.createDate, 'yyyy-MM-dd HH:mm')}"></div>
                 </div>
-            </div>
-            <div class="my-3">
-
-                <a href="javascript:void(0);" class="recommend btn btn-sm btn-outline-secondary"
-                   th:data-uri="@{|/answer/vote/${answer.id}|}">
-                    추천
-                    <span class="badge rounded-pill bg-success" th:text="${#lists.size(answer.voter)}"></span>
-                </a>
-                <a th:href="@{|/answer/modify/${answer.id}|}" class="btn btn-sm btn-outline-secondary"
-                   sec:authorize="isAuthenticated()"
-                   th:if="${answer.author != null and #authentication.getPrincipal().getUsername() == answer.author.username}"
-                   th:text="수정">
-                </a>
-
-                <a href="javascript:void(0);" th:data-uri="@{|/answer/delete/${answer.id}|}"
-                   class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()"
-                   th:if="${answer.author != null and #authentication.getPrincipal().getUsername() == answer.author.username}"
-                   th:text="삭제">
-                </a>
-
-            </div>
-        </div>
+            </td>
+        </tr>
+        </tbody>
     </div>
     <!-- 답변 반복 끝  -->
+
     <!-- 답변 작성 -->
     <form th:action="@{|/answer/create/${question.id}|}" th:object="${answerForm}" method="post" class="my-3">
         <div th:replace="~{form_errors :: formErrorsFragment}"></div>
@@ -92,38 +103,65 @@
         <textarea sec:authorize="isAuthenticated()" th:field="*{content}" class="form-control" rows="10"></textarea>
         <input type="submit" value="답변등록" class="btn btn-primary my-2">
     </form>
+
+    <!-- 페이징처리 시작 -->
+    <div th:if="${!paging.isEmpty()}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${!paging.hasPrevious} ? 'disabled'">
+                <a class="page-link" href="javascript:void(0)" th:data-page="${paging.number-1}">
+                    <span>이전</span>
+                </a>
+            </li>
+            <li th:each="page: ${#numbers.sequence(paging.number - 2, paging.number + 2)}"
+                th:if="${page >= 0 and page < paging.totalPages}"
+                th:classappend="${page == paging.number} ? 'active'" class="page-item">
+                <a th:text="${page + 1}" class="page-link" href="javascript:void(0)" th:data-page="${page}"></a>
+            </li>
+            <li class="page-item" th:classappend="${!paging.hasNext} ? 'disabled'">
+                <a class="page-link" href="javascript:void(0)" th:data-page="${paging.number+1}">
+                    <span>다음</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <!-- 페이징처리 끝 -->
+
+    <form th:action="@{/question/detail}" method="get" id="card-body">
+        <input type="hidden" id="page" name="page" th:value="${paging.number}">
+    </form>
 </div>
 
-<script layout:fragment="script" type='text/javascript' id="delete_recommend">
+<script layout:fragment="script" type='text/javascript'>
+    // 삭제 및 추천 스크립트
     const delete_elements = document.getElementsByClassName("delete");
-        Array.from(delete_elements).forEach(function (element) {
-            element.addEventListener('click', function () {
-                if (confirm("정말로 삭제하시겠습니까?")) {
-                    location.href = this.dataset.uri;
-            };
+    Array.from(delete_elements).forEach(function (element) {
+        element.addEventListener('click', function () {
+            if (confirm("정말로 삭제하시겠습니까?")) {
+                location.href = this.dataset.uri;
+            }
         });
     });
 
     const recommend_elements = document.getElementsByClassName("recommend");
-        Array.from(recommend_elements).forEach(function (element) {
-            element.addEventListener('click', function () {
-                if (confirm("정말로 추천하시겠습니까?")) {
-                    location.href = this.dataset.uri;
-            };
+    Array.from(recommend_elements).forEach(function (element) {
+        element.addEventListener('click', function () {
+            if (confirm("정말로 추천하시겠습니까?")) {
+                location.href = this.dataset.uri;
+            }
         });
     });
-</script>
 
-<script layout:fragment="script" type='text/javascript' id="recommend_paging">
-    const page_elements = document.getElementsByClassName("page-link");
-    const questionId = /* 질문 ID를 가져오는 코드 */;
-
-    Array.from(page_elements).forEach(function(element) {
-        element.addEventListener('click', function() {
-            const page = this.dataset.page;
-            let url = '/question/detail/' + questionId + '#answer_' + questionId + '?page=' + page;
-            window.location.href = url;
-        });
+    // 페이징 스크립트
+    const paging_links = document.getElementsByClassName("paging");
+    Array.from(paging).forEach(function(element) {
+        if (!element.hasEventListener('click')) { // 리스너 존재 여부 확인
+            element.addEventListener('click', function() {
+                const questionId = [[${question.id}]]; // Thymeleaf 변수에서 질문 ID 가져오기
+                const page = this.dataset.page;
+                let url = '/question/detail/' + questionId + '?page=' + page + '#answer_' + questionId;
+                window.location.href = url;
+            });
+        }
     });
 </script>
 
