@@ -96,17 +96,22 @@
     <!-- 답변 반복 끝  -->
 
     <!-- 답변 작성 -->
-    <form th:action="@{|/answer/create/${question.id}|}" th:object="${answerForm}" method="post" class="my-3">
-        <div th:replace="~{form_errors :: formErrorsFragment}"></div>
-        <textarea sec:authorize="isAnonymous()" disabled th:field="*{content}" class="form-control"
-                  rows="10"></textarea>
-        <textarea sec:authorize="isAuthenticated()" th:field="*{content}" class="form-control" rows="10"></textarea>
-        <input type="submit" value="답변등록" class="btn btn-primary my-2">
-    </form>
+    <div sec:authorize="isAuthenticated()">
+        <form th:action="@{|/answer/create/${question.id}|}" th:object="${answerForm}" method="post" class="my-3">
+            <div th:replace="~{form_errors :: formErrorsFragment}"></div>
+            <textarea th:field="*{content}" class="form-control" rows="10"></textarea>
+            <input type="submit" value="답변등록" class="btn btn-primary my-2">
+        </form>
+    </div>
+    <div sec:authorize="isAnonymous()" class="text-center my-3">
+        <span>
+            <a th:href="@{/user/login}">로그인</a> 후에 답변을 등록할 수 있습니다.
+        </span>
+    </div>
 
     <!-- 페이징처리 시작 -->
-    <div th:if="${!paging.isEmpty()}">
-        <ul class="pagination justify-content-center">
+    <div th:if="${!paging.isEmpty()}" class="d-flex justify-content-center">
+        <ul class="pagination">
             <li class="page-item" th:classappend="${!paging.hasPrevious} ? 'disabled'">
                 <a class="page-link" href="javascript:void(0)" th:data-page="${paging.number-1}">
                     <span>이전</span>
@@ -127,9 +132,6 @@
     <!-- 페이징처리 끝 -->
 
 
-    <form th:action="@{/question/detail}" method="get" id="card-body">
-        <input type="hidden" id="page" name="page" th:value="${paging.number}">
-    </form>
 </div>
 
 <script layout:fragment="script" type='text/javascript'>
@@ -147,10 +149,8 @@
     Array.from(recommend_elements).forEach(function (element) {
         element.addEventListener('click', function () {
             if (confirm("정말로 추천하시겠습니까?")) {
-                const answerId = this.closest('.card').id.split('_')[1]; // 답변의 ID 가져오기
-                const url = '/answer/vote/' + answerId;
-                location.href = url;
-            }
+                location.href = this.dataset.uri;
+            };
         });
     });
 
@@ -158,9 +158,9 @@
     const paging_links = document.getElementsByClassName("page-link");
     Array.from(paging_links).forEach(function(element) {
         element.addEventListener('click', function() {
-            const questionId = [[${question.id}]]; // Thymeleaf 변수에서 질문 ID 가져오기
+            const questionId = [[${question.id}]];
             const page = this.dataset.page;
-            const url = '/question/detail/' + questionId + '?page=' + page;
+            const url = `/question/detail/${questionId}?answer_page=${page}`;
             window.location.href = url;
         });
     });
