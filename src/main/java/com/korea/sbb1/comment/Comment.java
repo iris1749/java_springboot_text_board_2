@@ -1,21 +1,18 @@
-package com.korea.sbb1.answer;
+package com.korea.sbb1.comment;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
-
-import com.korea.sbb1.comment.Comment;
-import com.korea.sbb1.question.Question;
-
+import com.korea.sbb1.answer.Answer;
 import com.korea.sbb1.user.SiteUser;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+import java.util.Set;
+
 @Getter
 @Setter
 @Entity
-public class Answer {
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -26,7 +23,7 @@ public class Answer {
     private LocalDateTime createDate;
 
     @ManyToOne
-    private Question question;
+    private Answer answer;
 
     @ManyToOne
     private SiteUser author;
@@ -35,8 +32,4 @@ public class Answer {
 
     @ManyToMany
     Set<SiteUser> voter;
-
-    @OneToMany(mappedBy = "answer", cascade = CascadeType.ALL)
-    private List<Comment> comments; // 대답에 속한 답글 컬렉션 필드
 }
-

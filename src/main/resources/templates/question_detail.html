@@ -39,6 +39,9 @@
                    class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()"
                    th:if="${question.author != null and #authentication.getPrincipal().getUsername() == question.author.username}"
                    th:text="삭제"></a>
+                <a href="@{|question/|}">
+
+                </a>
             </div>
         </div>
     </div>
@@ -51,7 +54,7 @@
             <div class="input-group" id="sort_form">
                 <select class="form-select" id="sort_option" name="sortoption" onchange="updateSortOption()">
                     <option value="latest" selected>최신순</option>
-                    <option value="earliest">오래된순</option>
+                    <option value="earliest">과거순</option>
                     <option value="recommended">추천순</option>
                 </select>
             </div>
@@ -105,6 +108,9 @@
                                sec:authorize="isAuthenticated()"
                                th:if="${answer.author != null and #authentication.getPrincipal().getUsername() == answer.author.username}"
                                th:text="삭제">
+                            </a>
+                            <a href="">
+
                             </a>
                         </div>
                     </div>
