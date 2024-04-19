@@ -32,10 +32,20 @@ public class AnswerService {
         return answer;
     }
 
-    public Page<Answer> getListByQuestion(Question question, int page) {
-        Pageable pageable = PageRequest.of(page, 5, Sort.by("createDate").descending());
+    public Page<Answer> getListByQuestion(Question question, int page, String sortOption) {
+        Pageable pageable;
+        if (sortOption.equals("latest")) {
+            pageable = PageRequest.of(page, 5, Sort.by("createDate").descending());
+        } else if (sortOption.equals("earliest")) {
+            pageable = PageRequest.of(page, 5, Sort.by("createDate").ascending());
+        } else if (sortOption.equals("recommended")) {
+            pageable = PageRequest.of(page, 5, Sort.by("voter").descending());
+        } else {
+            pageable = PageRequest.of(page, 5, Sort.by("createDate").descending());
+        }
         return answerRepository.findByQuestion(question, pageable);
     }
+
 
 
     public Answer getAnswer(Integer id) {

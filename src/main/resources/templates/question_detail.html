@@ -43,7 +43,27 @@
         </div>
     </div>
     <!-- 답변의 갯수 표시 -->
-    <h5 class="border-bottom my-3 py-2" th:text="|${#lists.size(question.answerList)}개의 답변이 있습니다.|"></h5>
+
+    <div class="d-flex align-items-center">
+        <h5 class="flex-grow-1" th:text="|${#lists.size(question.answerList)}개의 답변이 있습니다.|"></h5>
+
+        <form th:action="@{/question/detail}" method="get" id="sortForm">
+            <div class="input-group" id="sort_form">
+                <select class="form-select" id="sort_option" name="sortoption" onchange="updateSortOption()">
+                    <option value="latest" selected>최신순</option>
+                    <option value="earliest">오래된순</option>
+                    <option value="recommended">추천순</option>
+                </select>
+            </div>
+        </form>
+    </div>
+    <div class="border-bottom py-1"></div>
+
+    <style>
+        .d-flex.align-items-center {
+            align-items: center;
+        }
+    </style>
 
     <!-- 답변 반복 시작 -->
     <div>
@@ -115,26 +135,72 @@
     <div th:if="${!paging.isEmpty()}" class="d-flex justify-content-center">
         <ul class="pagination">
             <li class="page-item" th:classappend="${!paging.hasPrevious} ? 'disabled'">
-                <a class="page-link" href="javascript:void(0)" th:data-page="${paging.number-1}">
-                    <span>이전</span>
+                <a class="page-link" href="#" th:if="${paging.hasPrevious}"
+                   th:href="@{/question/detail/{id}(id=${question.id}, sortoption=${sortOption}, answer_page=${paging.number-1})}">
+                    이전
                 </a>
             </li>
-            <li th:each="page: ${#numbers.sequence(paging.number - 2, paging.number + 2)}"
-                th:if="${page >= 0 and page < paging.totalPages}"
-                th:classappend="${page == paging.number} ? 'active'" class="page-item">
-                <a th:text="${page + 1}" class="page-link" href="javascript:void(0)" th:data-page="${page}"></a>
+            <li th:each="page : ${#numbers.sequence(0, paging.totalPages-1)}"
+                th:classappend="${page == paging.number} ? 'active'" class="page-item" th:if="${page >= paging.number - 2 and page <= paging.number + 2}">
+                <a class="page-link" href="#" th:href="@{/question/detail/{id}(id=${question.id}, sortoption=${sortOption}, answer_page=${page})}"
+                   th:text="${page + 1}" th:data-page="${page}"></a>
             </li>
             <li class="page-item" th:classappend="${!paging.hasNext} ? 'disabled'">
-                <a class="page-link" href="javascript:void(0)" th:data-page="${paging.number+1}">
-                    <span>다음</span>
+                <a class="page-link" href="#" th:if="${paging.hasNext}"
+                   th:href="@{/question/detail/{id}(id=${question.id}, sortoption=${sortOption}, answer_page=${paging.number+1})}">
+                    다음
                 </a>
             </li>
         </ul>
     </div>
     <!-- 페이징처리 끝 -->
 
+    <script type="text/javascript">
+        // 현재 URL에서 sortOption 값을 가져오는 함수
+        function getCurrentSortOption() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('sortoption') || 'latest';
+        }
 
+        // 페이지 로드 시 sortOption 값을 설정하는 함수
+        window.onload = function () {
+            const sortOption = getCurrentSortOption();
+            document.getElementById('sort_option').value = sortOption;
+        };
+
+        // 페이지 로드 시 URL에서 sortoption 파라미터 값을 가져와서 select 태그의 값으로 설정하는 함수
+        window.onload = function () {
+            var urlParams = new URLSearchParams(window.location.search);
+            var sortOption = urlParams.get('sortoption');
+            if (sortOption !== null) {
+                document.getElementById('sort_option').value = sortOption;
+            }
+        };
+
+        // 정렬 옵션 선택 시 URL에 정렬 옵션 추가하는 함수
+        function updateSortOption() {
+            var sortOption = document.getElementById("sort_option").value;
+            var questionId = [[${question.id}]]; // Thymeleaf 변수에서 질문 ID 가져오기
+            var currentUrl = window.location.href;
+            var baseUrl = currentUrl.split('?')[0]; // URL의 기본 부분만 추출
+            var newUrl = baseUrl + '?sortoption=' + sortOption; // 새로운 URL 생성
+
+        // URL에 answer_page 파라미터가 있는 경우 유지
+         var urlParams = new URLSearchParams(window.location.search);
+         var answerPage = urlParams.get('answer_page');
+         if (answerPage) {
+             newUrl += '&answer_page=' + answerPage;
+         }
+
+         // 새로운 URL로 페이지 이동
+         window.location.href = newUrl;
+    }
+    </script>
 </div>
+
+<!-- 페이지 내용 -->
+
+<!-- 페이지 하단에 스크립트 추가 -->
 
 <script layout:fragment="script" type='text/javascript'>
     // 삭제 및 추천 스크립트
@@ -159,13 +225,16 @@
     // 페이징 스크립트
     const paging_links = document.getElementsByClassName("page-link");
     Array.from(paging_links).forEach(function(element) {
-        element.addEventListener('click', function() {
+        element.addEventListener('click', function(event) {
+            event.preventDefault(); // 링크 기본 동작 방지
+
             const questionId = [[${question.id}]];
+            const sortOption = getCurrentSortOption(); // 현재 정렬 옵션 가져오기
             const page = this.dataset.page;
-            const url = `/question/detail/${questionId}?answer_page=${page}`;
+            const url = `/question/detail/${questionId}?sortoption=${sortOption}&answer_page=${page}`;
             window.location.href = url;
-        });
     });
+});
 </script>
 
 </body>

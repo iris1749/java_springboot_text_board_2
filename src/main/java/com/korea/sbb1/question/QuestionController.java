@@ -45,11 +45,13 @@ public class QuestionController {
 
     @GetMapping(value = "/detail/{id}")
     public String detail(Model model, @PathVariable("id") Integer id, AnswerForm answerForm,
+                         @RequestParam(name = "sortoption", defaultValue = "latest") String sortoption,
                          @RequestParam(name = "answer_page", defaultValue = "0") int answer_page) {
         Question question = this.questionService.getQuestion(id);
         model.addAttribute("question", question);
 
-        Page<Answer> paging = this.answerService.getListByQuestion(question, answer_page);
+        // 정렬 옵션에 따라 다른 정렬 기준으로 페이지를 조회
+        Page<Answer> paging = this.answerService.getListByQuestion(question, answer_page, sortoption);
         model.addAttribute("paging", paging);
 
         return "question_detail";
