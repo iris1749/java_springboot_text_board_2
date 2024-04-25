@@ -43,8 +43,8 @@ public class CommentController {
         }
 
         Comment comment = this.commentService.create(answer, commentForm.getContent(), siteUser);
-        return String.format("redirect:/question/detail/%s#comment_%s",
-                answer.getQuestion().getId(), comment.getId());
+        return String.format("redirect:/question/detail/%s#answer_%s",
+                answer.getQuestion().getId(), answer.getId());
 
     }
 
@@ -72,7 +72,8 @@ public class CommentController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
         this.commentService.modify(comment, commentForm.getContent());
-        return String.format("redirect:/question/detail/%s", comment.getAnswer().getQuestion().getId());
+        return String.format("redirect:/question/detail/%s#answer_%s",
+                comment.getAnswer().getQuestion().getId(), comment.getAnswer().getId());
     }
 
 
@@ -84,7 +85,8 @@ public class CommentController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
         }
         this.commentService.delete(comment);
-        return String.format("redirect:/question/detail/%s", comment.getAnswer().getQuestion().getId());
+        return String.format("redirect:/question/detail/%s#answer_%s",
+                comment.getAnswer().getQuestion().getId(), comment.getAnswer().getId());
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -93,7 +95,7 @@ public class CommentController {
         Comment comment = this.commentService.getComment(id);
         SiteUser siteUser = this.userService.getUser(principal.getName());
         this.commentService.vote(comment, siteUser);
-        return String.format("redirect:/question/detail/%s#comment_%s",
-                comment.getAnswer().getQuestion().getId(), comment.getId());
+        return String.format("redirect:/question/detail/%s#answer_%s",
+                comment.getAnswer().getQuestion().getId(), comment.getAnswer().getId());
     }
 }

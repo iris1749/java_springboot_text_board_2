@@ -36,7 +36,6 @@ public class Answer {
     @ManyToMany
     Set<SiteUser> voter;
 
-    @OneToMany(mappedBy = "answer", cascade = CascadeType.ALL)
-    private List<Comment> comments; // 대답에 속한 답글 컬렉션 필드
+    @OneToMany(mappedBy = "answer", cascade = CascadeType.REMOVE)
+    private List<Comment> commentList; // 대답에 속한 답글 컬렉션 필드
 }
-

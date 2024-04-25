@@ -13,7 +13,7 @@ import java.util.Optional;
 @Service
 public class CommentService {
 
-    private final CommentRepository CommentRepository;
+    private final CommentRepository commentRepository;
 
     public Comment create(Answer answer, String content, SiteUser author) {
         Comment comment = new Comment();
@@ -21,12 +21,12 @@ public class CommentService {
         comment.setCreateDate(LocalDateTime.now());
         comment.setAnswer(answer);
         comment.setAuthor(author);
-        this.CommentRepository.save(comment);
+        this.commentRepository.save(comment);
         return comment;
     }
 
     public Comment getComment(Integer id) {
-        Optional<Comment> comment = this.CommentRepository.findById(id);
+        Optional<Comment> comment = this.commentRepository.findById(id);
         if (comment.isPresent()) {
             return comment.get();
         } else {
@@ -37,11 +37,11 @@ public class CommentService {
     public void modify(Comment comment, String content) {
         comment.setContent(content);
         comment.setModifyDate(LocalDateTime.now());
-        this.CommentRepository.save(comment);
+        this.commentRepository.save(comment);
     }
 
     public void delete(Comment comment) {
-        this.CommentRepository.delete(comment);
+        this.commentRepository.delete(comment);
     }
 
     public void vote(Comment comment, SiteUser siteUser) {
