@@ -191,106 +191,115 @@
                 <!-- 댓글 구현 끝 -->
             </td>
         </tr>
-</tbody>
-</div>
-<!-- 답변 반복 끝  -->
+        </tbody>
+    </div>
+    <!-- 답변 반복 끝  -->
 
-<!-- 답변 작성 -->
-<div sec:authorize="isAuthenticated()">
-    <form th:action="@{|/answer/create/${question.id}|}" th:object="${answerForm}" method="post" class="my-3">
-        <div th:replace="~{form_errors :: formErrorsFragment}"></div>
-        <textarea th:field="*{content}" class="form-control" rows="10"></textarea>
-        <div class="d-flex justify-content-end">
-            <input type="submit" value="답변등록" class="btn btn-primary my-2">
-        </div>
-    </form>
-</div>
-<div sec:authorize="isAnonymous()" class="text-center my-3">
+    <!-- 답변 작성 -->
+    <div sec:authorize="isAuthenticated()">
+        <form th:action="@{|/answer/create/${question.id}|}" th:object="${answerForm}" method="post" class="my-3">
+            <div th:replace="~{form_errors :: formErrorsFragment}"></div>
+            <textarea th:field="*{content}" class="form-control" rows="10"></textarea>
+            <div class="d-flex justify-content-end">
+                <input type="submit" value="답변등록" class="btn btn-primary my-2">
+            </div>
+        </form>
+    </div>
+    <div sec:authorize="isAnonymous()" class="text-center my-3">
         <span>
             <a th:href="@{/user/login}">로그인</a> 후에 답변을 등록할 수 있습니다.
         </span>
-</div>
+    </div>
 
-<!-- 페이징처리 시작 -->
-<div th:if="${!paging.isEmpty()}" class="d-flex justify-content-center">
-    <ul class="pagination">
-        <li class="page-item" th:classappend="${!paging.hasPrevious} ? 'disabled'">
-            <a class="page-link" href="#" th:if="${paging.hasPrevious}"
-               th:href="@{/question/detail/{id}(id=${question.id}, sortoption=${sortOption}, answer_page=${paging.number-1})}">
-                이전
-            </a>
-        </li>
-        <li th:each="page : ${#numbers.sequence(0, paging.totalPages-1)}"
-            th:classappend="${page == paging.number} ? 'active'" class="page-item"
-            th:if="${page >= paging.number - 2 and page <= paging.number + 2}">
-            <a class="page-link" href="#"
-               th:href="@{/question/detail/{id}(id=${question.id}, sortoption=${sortOption}, answer_page=${page})}"
-               th:text="${page + 1}" th:data-page="${page}"></a>
-        </li>
-        <li class="page-item" th:classappend="${!paging.hasNext} ? 'disabled'">
-            <a class="page-link" href="#" th:if="${paging.hasNext}"
-               th:href="@{/question/detail/{id}(id=${question.id}, sortoption=${sortOption}, answer_page=${paging.number+1})}">
-                다음
-            </a>
-        </li>
-    </ul>
-</div>
-<!-- 페이징처리 끝 -->
+    <!-- 페이징처리 시작 -->
+    <div th:if="${!paging.isEmpty()}" class="d-flex justify-content-center">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${!paging.hasPrevious} ? 'disabled'">
+                <a class="page-link" href="#" th:if="${paging.hasPrevious}"
+                   th:href="@{/question/detail/{id}(id=${question.id}, sortoption=${sortOption}, answer_page=${paging.number-1})}">
+                    이전
+                </a>
+            </li>
+            <li th:each="page : ${#numbers.sequence(0, paging.totalPages-1)}"
+                th:classappend="${page == paging.number} ? 'active'" class="page-item"
+                th:if="${page >= paging.number - 2 and page <= paging.number + 2}">
+                <a class="page-link" href="#"
+                   th:href="@{/question/detail/{id}(id=${question.id}, sortoption=${sortOption}, answer_page=${page})}"
+                   th:text="${page + 1}" th:data-page="${page}"></a>
+            </li>
+            <li class="page-item" th:classappend="${!paging.hasNext} ? 'disabled'">
+                <a class="page-link" href="#" th:if="${paging.hasNext}"
+                   th:href="@{/question/detail/{id}(id=${question.id}, sortoption=${sortOption}, answer_page=${paging.number+1})}">
+                    다음
+                </a>
+            </li>
+        </ul>
+    </div>
+    <!-- 페이징처리 끝 -->
 
-<script type="text/javascript">
-    // 현재 URL에서 sortOption 값을 가져오는 함수
-    function getCurrentSortOption() {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get('sortoption') || 'latest';
-    }
+    <script type="text/javascript">
+        // 현재 URL에서 sortOption 값을 가져오는 함수
+        function getCurrentSortOption() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('sortoption') || 'latest';
+        }
 
-    // 페이지 로드 시 sortOption 값을 설정하는 함수
-    window.onload = function () {
-        const sortOption = getCurrentSortOption();
-        document.getElementById('sort_option').value = sortOption;
-    };
-
-    // 페이지 로드 시 URL에서 sortoption 파라미터 값을 가져와서 select 태그의 값으로 설정하는 함수
-    window.onload = function () {
-        var urlParams = new URLSearchParams(window.location.search);
-        var sortOption = urlParams.get('sortoption');
-        if (sortOption !== null) {
+        // 페이지 로드 시 sortOption 값을 설정하는 함수
+        window.onload = function () {
+            const sortOption = getCurrentSortOption();
             document.getElementById('sort_option').value = sortOption;
+        };
+
+        // 페이지 로드 시 URL에서 sortoption 파라미터 값을 가져와서 select 태그의 값으로 설정하는 함수
+        window.onload = function () {
+            var urlParams = new URLSearchParams(window.location.search);
+            var sortOption = urlParams.get('sortoption');
+            if (sortOption !== null) {
+                document.getElementById('sort_option').value = sortOption;
+            }
+        };
+
+        // 정렬 옵션 선택 시 URL에 정렬 옵션 추가하는 함수
+        function updateSortOption() {
+            var sortOption = document.getElementById("sort_option").value;
+            var questionId = [[${question.id}]]; // Thymeleaf 변수에서 질문 ID 가져오기
+            var currentUrl = window.location.href;
+            var baseUrl = currentUrl.split('?')[0]; // URL의 기본 부분만 추출
+            var newUrl = baseUrl + '?sortoption=' + sortOption; // 새로운 URL 생성
+
+        // URL에 answer_page 파라미터가 있는 경우 유지
+         var urlParams = new URLSearchParams(window.location.search);
+         var answerPage = urlParams.get('answer_page');
+         if (answerPage) {
+             newUrl += '&answer_page=' + answerPage;
+         }
+
+         // 새로운 URL로 페이지 이동
+         window.location.href = newUrl;
         }
-    };
 
-    // 정렬 옵션 선택 시 URL에 정렬 옵션 추가하는 함수
-    function updateSortOption() {
-        var sortOption = document.getElementById("sort_option").value;
-        var questionId = [[${question.id}]]; // Thymeleaf 변수에서 질문 ID 가져오기
-        var currentUrl = window.location.href;
-        var baseUrl = currentUrl.split('?')[0]; // URL의 기본 부분만 추출
-        var newUrl = baseUrl + '?sortoption=' + sortOption; // 새로운 URL 생성
+        // 페이지 로드 시 댓글 스위치를 꺼져 있는 상태로 설정
+        window.onload = function() {
+            const checkbox = document.getElementById("flexSwitchCheckDefault");
+            if (checkbox) {
+                checkbox.checked = false;
+                toggleComments(checkbox);
+            }
+        };
 
-    // URL에 answer_page 파라미터가 있는 경우 유지
-     var urlParams = new URLSearchParams(window.location.search);
-     var answerPage = urlParams.get('answer_page');
-     if (answerPage) {
-         newUrl += '&answer_page=' + answerPage;
-     }
-
-     // 새로운 URL로 페이지 이동
-     window.location.href = newUrl;
-    }
-
-    // 스위치 상태에 따라 댓글과 댓글 등록 창을 표시하거나 숨기는 함수
-    function toggleComments(checkbox) {
-        var commentsSection = document.getElementById("commentsSection");
-        if (checkbox.checked) {
-            // 스위치가 켜져 있으면 댓글과 등록 창을 보이도록 설정
-            commentsSection.style.display = "block";
-        } else {
-            // 스위치가 꺼져 있으면 댓글과 등록 창을 숨김
-            commentsSection.style.display = "none";
+        // 스위치 상태에 따라 댓글과 댓글 등록 창을 표시하거나 숨기는 함수
+        function toggleComments(checkbox) {
+            var commentsSection = document.getElementById("commentsSection");
+            if (checkbox.checked) {
+                // 스위치가 켜져 있으면 댓글과 등록 창을 보이도록 설정
+                commentsSection.style.display = "block";
+            } else {
+                // 스위치가 꺼져 있으면 댓글과 등록 창을 숨김
+                commentsSection.style.display = "none";
+            }
         }
-    }
 
-</script>
+    </script>
 </div>
 
 <!-- 페이지 내용 -->
@@ -335,3 +344,4 @@
 
 </body>
 </html>
+

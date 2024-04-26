@@ -2,11 +2,19 @@ package com.korea.sbb1.comment;
 
 import com.korea.sbb1.DataNotFoundException;
 import com.korea.sbb1.answer.Answer;
+import com.korea.sbb1.question.Question;
 import com.korea.sbb1.user.SiteUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -23,6 +31,10 @@ public class CommentService {
         comment.setAuthor(author);
         this.commentRepository.save(comment);
         return comment;
+    }
+
+    public List<Comment> getCommentsByAnswer(Answer answer) {
+        return commentRepository.findByAnswer(answer);
     }
 
     public Comment getComment(Integer id) {

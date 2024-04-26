@@ -1,13 +1,13 @@
 package com.korea.sbb1.answer;
 
 import com.korea.sbb1.question.Question;
-import com.korea.sbb1.question.QuestionForm;
+import com.korea.sbb1.comment.Comment;
+import com.korea.sbb1.comment.CommentService;
 import com.korea.sbb1.question.QuestionService;
 import com.korea.sbb1.user.SiteUser;
 import com.korea.sbb1.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.boot.jaxb.mapping.JaxbCompositeUserTypeRegistration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -17,12 +17,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
+import java.util.List;
 
 @RequestMapping("/answer")
 @RequiredArgsConstructor
 @Controller
 public class AnswerController {
 
+    private final CommentService commentService;
     private final QuestionService questionService;
     private final AnswerService answerService;
     private final UserService userService;
@@ -43,6 +45,8 @@ public class AnswerController {
                 answer.getQuestion().getId(), answer.getId());
 
     }
+
+
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify/{id}")

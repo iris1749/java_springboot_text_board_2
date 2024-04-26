@@ -3,6 +3,8 @@ package com.korea.sbb1.question;
 import com.korea.sbb1.answer.Answer;
 import com.korea.sbb1.answer.AnswerForm;
 import com.korea.sbb1.answer.AnswerService;
+import com.korea.sbb1.comment.Comment;
+import com.korea.sbb1.comment.CommentService;
 import com.korea.sbb1.user.SiteUser;
 import com.korea.sbb1.user.UserService;
 import jakarta.validation.Valid;
@@ -28,6 +30,7 @@ import java.util.List;
 @Controller
 public class QuestionController {
 
+    private final CommentService commentService;
     private final QuestionService questionService;
     private final UserService userService;
 
