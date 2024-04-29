@@ -1,9 +1,11 @@
 package com.korea.sbb1.question;
 
+import ch.qos.logback.core.rolling.helper.IntegerTokenConverter;
 import com.korea.sbb1.answer.Answer;
 import com.korea.sbb1.answer.AnswerForm;
 import com.korea.sbb1.answer.AnswerService;
 import com.korea.sbb1.comment.Comment;
+import com.korea.sbb1.comment.CommentForm;
 import com.korea.sbb1.comment.CommentService;
 import com.korea.sbb1.user.SiteUser;
 import com.korea.sbb1.user.UserService;
@@ -23,6 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 @RequestMapping("/question")
@@ -47,15 +50,24 @@ public class QuestionController {
     }
 
     @GetMapping(value = "/detail/{id}")
-    public String detail(Model model, @PathVariable("id") Integer id, AnswerForm answerForm,
+    public String detail(Model model, @PathVariable("id") Integer id, AnswerForm answerForm, CommentForm commentForm,
                          @RequestParam(name = "sortoption", defaultValue = "latest") String sortoption,
                          @RequestParam(name = "answer_page", defaultValue = "0") int answer_page) {
+
         Question question = this.questionService.getQuestion(id);
         model.addAttribute("question", question);
 
         // 정렬 옵션에 따라 다른 정렬 기준으로 페이지를 조회
         Page<Answer> paging = this.answerService.getListByQuestion(question, answer_page, sortoption);
         model.addAttribute("paging", paging);
+
+        // 각 답변에 대한 댓글을 가져와서 리스트에 추가
+        List<Comment> commentList = new ArrayList<>();
+        for (Answer answer : paging.getContent()) {
+            List<Comment> commentsForAnswer = this.commentService.getCommentsByAnswer(answer);
+            commentList.addAll(commentsForAnswer);
+        }
+        model.addAttribute("comment", commentList);
 
         return "question_detail";
     }
