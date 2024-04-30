@@ -39,15 +39,14 @@ public class CommentController {
         }
 
         Comment comment = this.commentService.create(answer, commentForm.getContent(), siteUser);
-        return String.format("redirect:/question/detail/%s#answer_%s#comment_%s",
-                answer.getQuestion().getId(), answer.getId(), comment.getId());
+        return String.format("redirect:/question/detail/%s#answer_%s",
+                comment.getAnswer().getQuestion().getId(), comment.getAnswer().getId());
     }
 
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify/{id}")
     public String commentModify(CommentForm commentForm, @PathVariable("id") Integer id, Principal principal) {
-        Answer answer = this.answerService.getAnswer(id); // 답변 객체 가져오기
         Comment comment = this.commentService.getComment(id);
         if (!comment.getAuthor().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
@@ -59,45 +58,41 @@ public class CommentController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/modify/{id}")
-    public String commentModify(@Valid CommentForm commentForm, BindingResult bindingResult,
+    public String commentModify(CommentForm commentForm, BindingResult bindingResult,
                                 @PathVariable("id") Integer id, Principal principal) {
         if (bindingResult.hasErrors()) {
             return "comment_form";
         }
-        Answer answer = this.answerService.getAnswer(id); // 답변 객체 가져오기
         Comment comment = this.commentService.getComment(id);
         if (!comment.getAuthor().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
         this.commentService.modify(comment, commentForm.getContent());
 
-        return String.format("redirect:/question/detail/%s#answer_%s#comment_%s",
-                answer.getQuestion().getId(), answer.getId(), comment.getId());
+        return String.format("redirect:/question/detail/%s#answer_%s",
+                comment.getAnswer().getQuestion().getId(), comment.getAnswer().getId());
     }
-
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/delete/{id}")
     public String commentDelete(Principal principal, @PathVariable("id") Integer id) {
-        Answer answer = this.answerService.getAnswer(id); // 답변 객체 가져오기
         Comment comment = this.commentService.getComment(id);
         if (!comment.getAuthor().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
         }
         this.commentService.delete(comment);
 
-        return String.format("redirect:/question/detail/%s#answer_%s#comment_%s",
-                answer.getQuestion().getId(), answer.getId(), comment.getId());
+        return String.format("redirect:/question/detail/%s#answer_%s",
+                comment.getAnswer().getQuestion().getId(), comment.getAnswer().getId());
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/vote/{id}")
     public String commentVote(Principal principal, @PathVariable("id") Integer id) {
-        Answer answer = this.answerService.getAnswer(id); // 답변 객체 가져오기
         Comment comment = this.commentService.getComment(id);
         SiteUser siteUser = this.userService.getUser(principal.getName());
         this.commentService.vote(comment, siteUser);
-        return String.format("redirect:/question/detail/%s#answer_%s#comment_%s",
-                answer.getQuestion().getId(), answer.getId(), comment.getId());
+        return String.format("redirect:/question/detail/%s#answer_%s",
+                comment.getAnswer().getQuestion().getId(), comment.getAnswer().getId());
     }
 }

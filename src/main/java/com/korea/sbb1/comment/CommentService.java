@@ -57,8 +57,7 @@ public class CommentService {
     }
 
     public void vote(Comment comment, SiteUser siteUser) {
-        // 투표 로직 구현 (중복 투표 방지 등)
-        // 예시: comment.getVoter().add(siteUser); 를 사용하지 않고 투표 여부 확인 후 추가
-        // 이미 투표한 경우 예외처리 등 필요
+        comment.getVoter().add(siteUser);
+        this.commentRepository.save(comment);
     }
 }
