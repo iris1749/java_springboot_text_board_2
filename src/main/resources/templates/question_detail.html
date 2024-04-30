@@ -72,7 +72,7 @@
         <tbody>
         <tr class="text-center" th:each="answer : ${paging.content}">
             <td>
-                <div class="card my-3">
+                <div class="card my-3" th:id="|answer_${answer.id}|">
                     <a th:id="|answer_${answer.id}|"></a>
                     <div class="card-body">
                         <div class="card-text" th:utext="${@commonUtil.markdown(answer.content)}"></div>
@@ -119,8 +119,8 @@
                                         th:if="${#lists.size(answer.commentList) == 0}">
                                     </h8>
                                     <div class="form-check form-switch ms-2">
-                                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" onchange="toggleComments(this)">
-                                        <label class="form-check-label" for="flexSwitchCheckDefault"></label>
+                                        <input class="form-check-input" type="checkbox" th:id="|commentSwitch_${answer.id}|">
+                                        <label class="form-check-label" th:for="|commentSwitch_${answer.id}|"></label>
                                     </div>
                                 </div>
                             </div>
@@ -128,7 +128,7 @@
                     </div>
                 </div>
                 <!-- 댓글 기능 구현 -->
-                <div id="commentsSection" style="padding-left: 20px;">
+                <div th:id="|comment-section-${answer.id}|" class="comment-section" style="display: none; padding-left: 20px;">
                     <!-- 댓글 내용 -->
                     <div class="text-left" th:each="comment : ${answer.commentList}">
                         <div class="card my-3">
@@ -278,25 +278,26 @@
         }
 
         // 페이지 로드 시 댓글 스위치를 꺼져 있는 상태로 설정
-        window.onload = function() {
-            const checkbox = document.getElementById("flexSwitchCheckDefault");
-            if (checkbox) {
-                checkbox.checked = false;
-                toggleComments(checkbox);
-            }
-        };
+        const switchElements = document.querySelectorAll('.form-check-input');
+        switchElements.forEach(switchElement => {
+            switchElement.addEventListener('change', function() {
+                const answerId = this.id.split('_')[1];
+                const commentSection = document.getElementById(`comment-section-${answerId}`);
+                commentSection.style.display = this.checked ? 'block' : 'none';
+            });
+        });
 
         // 스위치 상태에 따라 댓글과 댓글 등록 창을 표시하거나 숨기는 함수
-        function toggleComments(checkbox) {
-            var commentsSection = document.getElementById("commentsSection");
+        function toggleComments(checkbox, commentsSectionId) {
+            const commentsSection = document.getElementById(commentsSectionId);
             if (checkbox.checked) {
-                // 스위치가 켜져 있으면 댓글과 등록 창을 보이도록 설정
                 commentsSection.style.display = "block";
             } else {
-                // 스위치가 꺼져 있으면 댓글과 등록 창을 숨김
                 commentsSection.style.display = "none";
             }
         }
+
+
 
     </script>
 </div>
