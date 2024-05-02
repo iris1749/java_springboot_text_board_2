@@ -260,21 +260,20 @@
 
         // 정렬 옵션 선택 시 URL에 정렬 옵션 추가하는 함수
         function updateSortOption() {
-            var sortOption = document.getElementById("sort_option").value;
-            var questionId = [[${question.id}]]; // Thymeleaf 변수에서 질문 ID 가져오기
-            var currentUrl = window.location.href;
-            var baseUrl = currentUrl.split('?')[0]; // URL의 기본 부분만 추출
-            var newUrl = baseUrl + '?sortoption=' + sortOption; // 새로운 URL 생성
+            const sortOption = document.getElementById("sort_option").value;
 
-        // URL에 answer_page 파라미터가 있는 경우 유지
-         var urlParams = new URLSearchParams(window.location.search);
-         var answerPage = urlParams.get('answer_page');
-         if (answerPage) {
-             newUrl += '&answer_page=' + answerPage;
-         }
+            const questionId = [[${question.id}]];
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('sortoption', sortOption); // 정렬 옵션 업데이트
 
-         // 새로운 URL로 페이지 이동
-         window.location.href = newUrl;
+            // 클릭된 버튼의 data-page 값을 가져오고, 값이 있는 경우에만 URL에 추가
+            const activePageLink = document.querySelector('li.page-item.active a');
+            if (activePageLink && activePageLink.dataset.page !== undefined && activePageLink.dataset.page !== "") {
+                const answerPage = activePageLink.dataset.page;
+                currentUrl.searchParams.set('answer_page', answerPage); // answer_page 값 설정
+            }
+
+            window.location.href = currentUrl.toString();
         }
 
         // 페이지 로드 시 댓글 스위치를 꺼져 있는 상태로 설정
@@ -296,9 +295,6 @@
                 commentsSection.style.display = "none";
             }
         }
-
-
-
     </script>
 </div>
 
@@ -332,7 +328,7 @@
         element.addEventListener('click', function(event) {
             event.preventDefault(); // 링크 기본 동작 방지
 
-            const questionId = [[${question.id}]];
+            const questionId = ${question.id};
             const sortOption = getCurrentSortOption(); // 현재 정렬 옵션 가져오기
             const page = this.dataset.page;
             const url = `/question/detail/${questionId}?sortoption=${sortOption}&answer_page=${page}`;
@@ -344,4 +340,3 @@
 
 </body>
 </html>
-
