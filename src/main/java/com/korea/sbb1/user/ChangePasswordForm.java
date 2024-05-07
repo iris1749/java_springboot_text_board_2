@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ChangingPasswordForm {
+public class ChangePasswordForm {
 
     @NotEmpty(message = "기존 비밀번호를 입력해주세요.")
     private String password;

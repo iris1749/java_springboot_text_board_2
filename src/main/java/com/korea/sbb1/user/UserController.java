@@ -1,13 +1,12 @@
 package com.korea.sbb1.user;
 
+import com.korea.sbb1.DataNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class UserController {
 
     private final UserService userService;
+    private static final String TEMP_PASSWORD_FORM = "temp_password_form";
 
     @GetMapping("/login")
     public String login() {
@@ -61,11 +61,11 @@ public class UserController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/changepassword")
-    public String showChangePasswordForm(Model model) {
+    public String changePassword(Model model) {
         // 인증된 사용자인지 확인
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
-            model.addAttribute("changePasswordForm", new ChangingPasswordForm()); // 변경
+            model.addAttribute("changePasswordForm", new ChangePasswordForm()); // 변경
             return "changepassword_form";
         } else {
             // 로그인하지 않은 사용자에게는 다른 페이지를 보여줄 수 있음
@@ -74,12 +74,10 @@ public class UserController {
     }
 
     @PostMapping("/changepassword")
-    public String changePassword(@Valid ChangingPasswordForm changingPasswordForm,
+    public String changePassword(@Valid ChangePasswordForm changingPasswordForm,
                                  BindingResult bindingResult, Model model) {
         // 비밀번호 변경 폼의 유효성 검사
         if (bindingResult.hasErrors()) {
-            // 에러가 있는 경우 변경 비밀번호 폼을 다시 보여줌
-            model.addAttribute("changePasswordForm", changingPasswordForm);
             return "changepassword_form";
         }
 
@@ -98,26 +96,45 @@ public class UserController {
         }
 
         // 새로운 비밀번호로 업데이트하기
-        boolean passwordChanged = userService.changePassword(username, changingPasswordForm.getPassword(), changingPasswordForm.getNewpassword1());
+        boolean passwordChanged = userService.changePassword(username, changingPasswordForm.getPassword(), changingPasswordForm.getNewpassword1(), changingPasswordForm.getNewpassword2());
 
-        if (passwordChanged) {
-            // 비밀번호 변경 성공
-            return "redirect:/";
-        } else {
-            // 비밀번호 변경 실패
-            bindingResult.reject("passwordChangeFailed", "비밀번호를 변경할 수 없습니다. 다시 시도하세요.");
+        switch (passwordChanged ? "success" : "failure") {
+            case "success":
+                // 비밀번호 변경 성공
+                return "redirect:/";
+            case "failure":
+                // 비밀번호 변경 실패
+                bindingResult.reject("passwordChangeFailed", "비밀번호를 변경할 수 없습니다. 다시 시도하세요.");
+                return "changepassword_form";
+            default:
+                return "changepassword_form";
+        }
+    }
+
+    @GetMapping("/forgotpassword")
+    public String sendTempPassword(TempPasswordForm tempPasswordForm) {
+        return "temp_password";
+    }
+
+    @PostMapping("/forgotpassword")
+    public String sendTempPassword(@Valid TempPasswordForm tempPasswordForm,
+                                   BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "temp_password";
         }
 
-        // 에러가 있는 경우 변경 비밀번호 폼을 다시 보여줌
-        model.addAttribute("changePasswordForm", changingPasswordForm);
-        return "changepassword_form";
+        try {
+            userService.sendTempPassword(tempPasswordForm.getUsername(), tempPasswordForm.getEmail());
+        } catch (DataNotFoundException e) {
+            e.printStackTrace();
+            bindingResult.reject("userNotFound", e.getMessage());
+            return "temp_password";
+        } catch (com.korea.sbb1.user.TempPasswordMail.EmailException e) {
+            e.printStackTrace();
+            bindingResult.reject("sendEmailFail", e.getMessage());
+            return "temp_password";
+        }
+        return "redirect:/";
     }
-
-    @PreAuthorize("isAnonymous()")
-    @GetMapping("/forgotPassword")
-    public String findPassword() {
-        return "forgot_password";
-    }
-
 }
 
