@@ -8,6 +8,11 @@
 
 <div layout:fragment="content" class="container my -3">
     <form th:action="@{/user/login}" method="post">
+        <div class="my-3 border-bottom">
+            <div>
+                <h4>로그인</h4>
+            </div>
+        </div>
         <div th:if="${param.error}">
             <div class="alert alert-danger">
                 사용자ID 또는 비밀번호를 확인해 주세요.
@@ -25,6 +30,8 @@
         </div>
 
         <button type="submit" class="btn btn-primary">로그인</button>
+
+        <a th:href="@{/user/forgotPassword}" class="btn btn-primary">비밀번호 찾기</a>
 
     </form>
 </div>

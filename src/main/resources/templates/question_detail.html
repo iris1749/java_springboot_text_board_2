@@ -8,6 +8,7 @@
 
 <div layout:fragment="content" class="container my-3">
     <!-- 질문 -->
+    <h7 th:text="${question.category}"></h7>
     <h2 class="border-bottom py-2" th:text="${question.subject}"></h2>
     <div class="card my-3">
         <div class="card-body">
@@ -237,17 +238,17 @@
     <!-- 페이징처리 끝 -->
 
     <script type="text/javascript">
-        // 현재 URL에서 sortOption 값을 가져오는 함수
-        function getCurrentSortOption() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('sortoption') || 'latest';
-        }
-
         // 페이지 로드 시 sortOption 값을 설정하는 함수
-        window.onload = function () {
+        function () {
             const sortOption = getCurrentSortOption();
             document.getElementById('sort_option').value = sortOption;
         };
+
+        // 현재 URL에서 sortOption 값을 가져오는 함수
+        function getCurrentSortOption() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('sortoption');
+        }
 
         // 페이지 로드 시 URL에서 sortoption 파라미터 값을 가져와서 select 태그의 값으로 설정하는 함수
         window.onload = function () {
@@ -329,10 +330,16 @@
             event.preventDefault(); // 링크 기본 동작 방지
 
             const questionId = ${question.id};
-            const sortOption = getCurrentSortOption(); // 현재 정렬 옵션 가져오기
+            const currentUrl = new URL(window.location.href);
+            const sortOption = currentUrl.searchParams.get('sortoption'); // 현재 URL에서 sortoption 값을 가져옴
             const page = this.dataset.page;
-            const url = `/question/detail/${questionId}?sortoption=${sortOption}&answer_page=${page}`;
-            window.location.href = url;
+
+            currentUrl.searchParams.set('answer_page', page); // 페이지 번호 설정
+            if (sortOption !== null) {
+                currentUrl.searchParams.set('sortoption', sortOption); // 정렬 옵션 설정
+            }
+
+            window.location.href = currentUrl.toString();
         });
     });
 </script>

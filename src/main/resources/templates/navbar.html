@@ -9,7 +9,7 @@
 <!-- 네비게이션 바 구현 -->
 <nav th:fragment="navbarFragment" class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
     <div class="container-fluid">
-        <a class="navbar-brand" href="/">SBB</a>
+        <a class="navbar-brand" href="/">Textboard</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -21,6 +21,16 @@
                     <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/user/login}">로그인</a>
                     <a class="nav-link" sec:authorize="isAuthenticated" th:href="@{/user/logout}">로그아웃</a>
                 </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/user/changepassword}">비밀번호 변경</a>
+                </li>
+
+                <li class="nav-item" sec:authorize="isAnonymous()">
+                    <!-- 로그인하지 않은 사용자에게만 보이도록 설정 -->
+                    <a class="nav-link" th:href="@{/user/forgotpassword}">비밀번호 찾기</a>
+                </li>
+
 
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/user/signup}">회원가입</a>
