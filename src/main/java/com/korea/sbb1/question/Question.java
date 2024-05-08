@@ -39,4 +39,8 @@ public class Question {
 
     private String category;
 
+    //조회수 추가
+    @Column(columnDefinition = "integer default 0", nullable = false)
+    private int view;
+
 }

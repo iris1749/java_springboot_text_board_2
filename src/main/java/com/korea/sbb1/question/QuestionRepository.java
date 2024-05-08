@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -27,6 +28,10 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
             "(:searchoption = 'all' AND (q.subject LIKE '%' || :kw || '%' OR u1.username LIKE '%' || :kw || '%' OR a.content LIKE '%' || :kw || '%' OR u2.username LIKE '%' || :kw || '%'))")
 
     Page<Question> findAllByKeywordAndSearchoption(@Param("searchoption") String searchoption, @Param("kw") String kw, Pageable pageable);
+
+    @Modifying
+    @Query("update Question q set q.view = q.view + 1 where q.id = :id")
+    int updateView(@Param("id") Integer id);
 }
 
 

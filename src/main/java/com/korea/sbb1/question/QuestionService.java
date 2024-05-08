@@ -11,6 +11,7 @@ import com.korea.sbb1.DataNotFoundException;
 import com.korea.sbb1.answer.Answer;
 import com.korea.sbb1.user.SiteUser;
 import jakarta.persistence.criteria.*;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -117,6 +118,12 @@ public class QuestionService {
     public void vote(Question question, SiteUser siteUser){
         question.getVoter().add(siteUser);
         this.questionRepository.save(question);
+    }
+
+    // 조회수 부분 추가
+    @Transactional
+    public int updateView(Integer id) {
+        return this.questionRepository.updateView(id);
     }
 
 }

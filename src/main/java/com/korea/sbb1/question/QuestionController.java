@@ -23,7 +23,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
-
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +57,7 @@ public class QuestionController {
                          @RequestParam(name = "answer_page", defaultValue = "0") int answer_page) {
 
         Question question = this.questionService.getQuestion(id);
+        questionService.updateView(id);
         model.addAttribute("question", question);
 
         // 정렬 옵션에 따라 다른 정렬 기준으로 페이지를 조회

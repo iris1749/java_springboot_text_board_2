@@ -68,6 +68,7 @@
             <th style="width:40%">제목</th>
             <th>작성자</th>
             <th>작성일시</th>
+            <th>조회수</th>
         </tr>
         </thead>
 
@@ -83,6 +84,7 @@
             </td>
             <td><span th:if="${question.author != null}" th:text="${question.author.username}"></span></td>
             <td th:text="${#temporals.format(question.createDate, 'yyyy-MM-dd HH:mm')}"></td>
+            <td><span th:text="${question.view}"></span></td>
         </tr>
         </tbody>
     </table>
