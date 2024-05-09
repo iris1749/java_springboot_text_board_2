@@ -2,18 +2,11 @@ package com.korea.sbb1.comment;
 
 import com.korea.sbb1.DataNotFoundException;
 import com.korea.sbb1.answer.Answer;
-import com.korea.sbb1.question.Question;
-import com.korea.sbb1.user.SiteUser;
+import com.korea.sbb1.user.account.SiteUser;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

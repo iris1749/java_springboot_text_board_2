@@ -1,6 +1,9 @@
-package com.korea.sbb1.user;
+package com.korea.sbb1.user.account;
 
 import com.korea.sbb1.DataNotFoundException;
+import com.korea.sbb1.user.password.ChangePasswordForm;
+import com.korea.sbb1.user.password.TempPasswordForm;
+import com.korea.sbb1.user.password.TempPasswordMail;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -24,6 +27,11 @@ public class UserController {
 
     @GetMapping("/login")
     public String login() {
+        return "login_form";
+    }
+
+    @GetMapping("/login/oauth2/code/google")
+    public String sociallogin() {
         return "login_form";
     }
 
@@ -129,7 +137,7 @@ public class UserController {
             e.printStackTrace();
             bindingResult.reject("userNotFound", e.getMessage());
             return "temp_password";
-        } catch (com.korea.sbb1.user.TempPasswordMail.EmailException e) {
+        } catch (TempPasswordMail.EmailException e) {
             e.printStackTrace();
             bindingResult.reject("sendEmailFail", e.getMessage());
             return "temp_password";

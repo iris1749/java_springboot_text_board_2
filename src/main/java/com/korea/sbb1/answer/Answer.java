@@ -7,7 +7,7 @@ import java.util.Set;
 import com.korea.sbb1.comment.Comment;
 import com.korea.sbb1.question.Question;
 
-import com.korea.sbb1.user.SiteUser;
+import com.korea.sbb1.user.account.SiteUser;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,21 +1,18 @@
 package com.korea.sbb1.question;
 
-import ch.qos.logback.core.rolling.helper.IntegerTokenConverter;
 import com.korea.sbb1.answer.Answer;
 import com.korea.sbb1.answer.AnswerForm;
 import com.korea.sbb1.answer.AnswerService;
 import com.korea.sbb1.comment.Comment;
 import com.korea.sbb1.comment.CommentForm;
 import com.korea.sbb1.comment.CommentService;
-import com.korea.sbb1.user.SiteUser;
-import com.korea.sbb1.user.UserService;
+import com.korea.sbb1.user.account.SiteUser;
+import com.korea.sbb1.user.account.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.patterns.TypePatternQuestions;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,9 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;

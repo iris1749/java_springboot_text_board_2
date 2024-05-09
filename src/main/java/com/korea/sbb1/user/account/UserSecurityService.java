@@ -1,4 +1,4 @@
-package com.korea.sbb1.user;
+package com.korea.sbb1.user.account;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import javax.lang.model.type.ArrayType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

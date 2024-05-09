@@ -1,11 +1,10 @@
 package com.korea.sbb1.answer;
 
 import com.korea.sbb1.question.Question;
-import com.korea.sbb1.comment.Comment;
 import com.korea.sbb1.comment.CommentService;
 import com.korea.sbb1.question.QuestionService;
-import com.korea.sbb1.user.SiteUser;
-import com.korea.sbb1.user.UserService;
+import com.korea.sbb1.user.account.SiteUser;
+import com.korea.sbb1.user.account.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
-import java.util.List;
 
 @RequestMapping("/answer")
 @RequiredArgsConstructor
