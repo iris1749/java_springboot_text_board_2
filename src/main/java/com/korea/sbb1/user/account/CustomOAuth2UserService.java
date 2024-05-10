@@ -1,5 +1,8 @@
 package com.korea.sbb1.user.account;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -29,6 +32,10 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         SiteUser user = saveOrUpdate(attributes);
 
+        // 사용자를 Authentication 객체로 변환하여 SecurityContext에 설정
+        Authentication authentication = new UsernamePasswordAuthenticationToken(user, null);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
         return new DefaultOAuth2User(
                 oAuth2User.getAuthorities(),
                 attributes.getAttributes(),
@@ -44,4 +51,5 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         return userRepository.save(user);
     }
 }
+
 

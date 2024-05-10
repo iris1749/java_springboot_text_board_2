@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -30,7 +31,7 @@ public class UserController {
         return "login_form";
     }
 
-    @GetMapping("/login/oauth2/code/google")
+    @PostMapping("/user/login/oauth2/code/google")
     public String sociallogin() {
         return "login_form";
     }

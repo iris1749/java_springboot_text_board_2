@@ -18,6 +18,9 @@
                 사용자ID 또는 비밀번호를 확인해 주세요.
             </div>
         </div>
+        <div th:if="${!#strings.isEmpty(session?.errorMessage)}" th:text="${session.errorMessage}" class="alert alert-danger" role="alert">
+            <!-- 에러 메시지가 출력될 영역 -->
+        </div>
 
         <div class="mb-3">
             <label for="username" class="form-label">사용자ID</label>

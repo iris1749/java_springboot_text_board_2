@@ -28,6 +28,7 @@ public class OAuthAttributes {
                 .build();
     }
 
+
     public SiteUser toEntity() {
         return SiteUser.builder()
                 .username(name)

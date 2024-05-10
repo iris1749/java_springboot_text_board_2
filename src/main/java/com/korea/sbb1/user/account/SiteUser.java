@@ -3,6 +3,7 @@ package com.korea.sbb1.user.account;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.management.relation.Role;
@@ -10,6 +11,7 @@ import javax.management.relation.Role;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 public class SiteUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,9 +23,6 @@ public class SiteUser {
 
     @Column(unique = true)
     private String email;
-
-    public SiteUser() {
-    }
 
     @Builder
     public SiteUser(Long id, String username, String email, String password) {
