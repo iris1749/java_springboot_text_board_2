@@ -1,9 +1,6 @@
-package com.korea.sbb1.user.account;
+package com.korea.sbb1.user;
 
 import com.korea.sbb1.DataNotFoundException;
-import com.korea.sbb1.user.password.ChangePasswordForm;
-import com.korea.sbb1.user.password.TempPasswordForm;
-import com.korea.sbb1.user.password.TempPasswordMail;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -14,7 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -28,11 +24,6 @@ public class UserController {
 
     @GetMapping("/login")
     public String login() {
-        return "login_form";
-    }
-
-    @PostMapping("/user/login/oauth2/code/google")
-    public String sociallogin() {
         return "login_form";
     }
 

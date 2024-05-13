@@ -2,7 +2,7 @@ package com.korea.sbb1.answer;
 
 import com.korea.sbb1.DataNotFoundException;
 import com.korea.sbb1.question.Question;
-import com.korea.sbb1.user.account.SiteUser;
+import com.korea.sbb1.user.SiteUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

@@ -1,4 +1,4 @@
-package com.korea.sbb1.user.password;
+package com.korea.sbb1.user;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

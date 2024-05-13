@@ -1,4 +1,4 @@
-package com.korea.sbb1.user.password;
+package com.korea.sbb1.user;
 
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;

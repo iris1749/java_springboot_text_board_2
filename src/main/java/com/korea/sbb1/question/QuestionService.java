@@ -7,7 +7,7 @@ import java.util.Optional;
 
 import com.korea.sbb1.DataNotFoundException;
 import com.korea.sbb1.answer.Answer;
-import com.korea.sbb1.user.account.SiteUser;
+import com.korea.sbb1.user.SiteUser;
 import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

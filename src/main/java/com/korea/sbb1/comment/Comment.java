@@ -1,7 +1,7 @@
 package com.korea.sbb1.comment;
 
 import com.korea.sbb1.answer.Answer;
-import com.korea.sbb1.user.account.SiteUser;
+import com.korea.sbb1.user.SiteUser;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

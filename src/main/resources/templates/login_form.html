@@ -37,14 +37,13 @@
         <a th:href="@{/user/forgotPassword}" class="btn btn-primary">비밀번호 찾기</a>
     </form>
 
-    <form th:action="@{/user/login/oauth2/code/google}" method="post">
         <div class="my-3 border-bottom">
             <div>
                 <h4>소셜 로그인</h4>
             </div>
         </div>
         <a href="/oauth2/authorization/google" class="btn btn-success active" role="button">Google Login</a>
-    </form>
+        <a href="/oauth2/authorization/naver" class="btn btn-success active" role="button">Naver Login</a>
 </div>
 
 </body>

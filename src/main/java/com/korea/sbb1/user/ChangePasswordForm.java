@@ -1,4 +1,4 @@
-package com.korea.sbb1.user.password;
+package com.korea.sbb1.user;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;

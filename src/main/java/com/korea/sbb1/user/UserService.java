@@ -1,9 +1,8 @@
-package com.korea.sbb1.user.account;
+package com.korea.sbb1.user;
 
 import com.korea.sbb1.CommonUtil;
 import com.korea.sbb1.DataNotFoundException;
-import com.korea.sbb1.user.password.TempPasswordMail;
-import com.korea.sbb1.user.password.TempPasswordMail.EmailException;
+import com.korea.sbb1.user.TempPasswordMail.EmailException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,11 +19,10 @@ public class UserService {
     private final CommonUtil commonUtil;
 
     public SiteUser create(String username, String email, String password){
-        SiteUser user = SiteUser.builder()
-                .username(username)
-                .email(email)
-                .password(passwordEncoder.encode(password))
-                .build();
+        SiteUser user = new SiteUser();
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setPassword(passwordEncoder.encode(password));
         this.userRepository.save(user);
         return user;
     }

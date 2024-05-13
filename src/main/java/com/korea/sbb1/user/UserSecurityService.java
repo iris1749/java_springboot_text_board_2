@@ -1,4 +1,4 @@
-package com.korea.sbb1.user.account;
+package com.korea.sbb1.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

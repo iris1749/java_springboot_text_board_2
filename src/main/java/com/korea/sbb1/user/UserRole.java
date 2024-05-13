@@ -1,4 +1,4 @@
-package com.korea.sbb1.user.account;
+package com.korea.sbb1.user;
 
 import lombok.Getter;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;

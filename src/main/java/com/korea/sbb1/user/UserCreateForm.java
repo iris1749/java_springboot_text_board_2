@@ -1,4 +1,4 @@
-package com.korea.sbb1.user.account;
+package com.korea.sbb1.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
